@@ -5,6 +5,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SideNavContent from './SideNavContent';
 import { motion } from 'framer-motion';
 import choice from './sidenavitem'
+import { NavLink } from 'react-router-dom';
 
 
 const HeaderBottom = () => {
@@ -42,7 +43,7 @@ const HeaderBottom = () => {
                   <motion.div ref={ref} initial={{ x: -500, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }} className='w-[80%] md:w-[350px] h-full bg-white border border-black overflow-y-auto'>
                       <div className='w-full bg-habesha_light text-white py-2 px-6 flex items-center gap-4'>
                         <AccountCircleIcon/>
-                        <h3 className='font-titleFont font-bold text-lg tracking-wide'>Hello, Sign In</h3>
+                        <NavLink  to='/SignIn' className='font-titleFont font-bold text-lg tracking-wide'>Hello, Sign In</NavLink>
                       </div>
                      
                       {choice.map((item) => (
