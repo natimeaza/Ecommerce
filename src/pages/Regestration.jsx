@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import { Link } from 'react-router-dom'
 import HabeshaLogo from '../assets/images/HabeshaLogo.jpeg'
+import api from '../componets/api/api'
 
 
 const Regestration = () => {
@@ -43,40 +44,40 @@ const Regestration = () => {
   return String(email).toLowerCase().match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
  }
 
-  const handleRegistration = (e) => {
-    e.preventDefault()
-   if(!clientName){
-      setErrClientName("Enter Your name")
-   }
-    if(!email){
-      setErrEmail("Enter Your Email")
-    }else{
-      if(!emailValidation(email)){
-        setErrEmail('Enter valid email')
-      }
-    }
-    if(!password){
-      setErrPassword("enter your password")
-    }else{
-      if(password.length < 6){
-        setErrPassword("password must be at least 6 characters")
-      }
-    }
-    if(!cPassword){
-      setErrCPassword("Confirm your password")
-    }else{
-      if(password !== cPassword){
-        setErrCPassword("password doesn't match") 
-      }
-    }
-    if(clientName && email && emailValidation(email) && password && password.length>=6 && password === cPassword){
-      setClientName('')
-      setEmail('')
-      setPassword('')
-      setCPassword('')
-    }
-  }
+  const handleRegistration = async (e) => {
+  e.preventDefault()
 
+  if (!clientName) setErrClientName("Enter Your name")
+  if (!email) setErrEmail("Enter Your Email")
+  else if (!emailValidation(email)) setErrEmail("Enter valid email")
+  if (!password) setErrPassword("Enter your password")
+  else if (password.length < 6) setErrPassword("Password must be at least 6 characters")
+  if (!cPassword) setErrCPassword("Confirm your password")
+  else if (password !== cPassword) setErrCPassword("Passwords don't match")
+
+  const isValid = clientName && emailValidation(email) && password.length >= 6 && password === cPassword
+
+  if (!isValid) return
+
+  try {
+    await api.post('/auth/register', {
+      name: clientName,
+      email,
+      password,
+      role: 'user' // default role
+    })
+
+    alert("Registration successful. Please sign in.")
+    setClientName('')
+    setEmail('')
+    setPassword('')
+    setCPassword('')
+
+  } catch (error) {
+    const msg = error.response?.data?.message || "Registration failed"
+    setErrEmail(msg)
+  }
+}
   return (
     <div className='w-full'>
    <div className='w-full bg-gray-100 pb-10'>

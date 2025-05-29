@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import { Link, useNavigate } from 'react-router-dom'
 import HabeshaLogo from '../assets/images/HabeshaLogo.jpeg'
+import api from '../componets/api/api'
 
 const SignIn = () => {
   const [email, setEmail] = useState("")
@@ -32,49 +33,56 @@ const SignIn = () => {
     return String(email).toLowerCase().match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
   }
 
-  const handleSignIn = (e) => {
-    e.preventDefault()
+  const handleSignIn = async (e) => {
+  e.preventDefault()
 
-    let isValid = true
+  let isValid = true
 
-    if (!email) {
-      setErrEmail("Enter Your Email")
-      isValid = false
-    } else if (!emailValidation(email)) {
-      setErrEmail('Enter valid email')
-      isValid = false
-    }
-
-    if (!password) {
-      setErrPassword("Enter your password")
-      isValid = false
-    } else if (password.length < 6) {
-      setErrPassword("Password must be at least 6 characters")
-      isValid = false
-    }
-
-    if (!role) {
-      setErrRole("Please select your role")
-      isValid = false
-    }
-
-    if (isValid) {
-      setEmail('')
-      setPassword('')
-      setRole('')
-
-      const user = { email, role }
-      localStorage.setItem("user", JSON.stringify(user))
-
-      // 🔁 Redirect
-      if (role === "admin") {
-        navigate("/admin")
-      } else {
-        navigate("/")
-      }
-    }
+  if (!email) {
+    setErrEmail("Enter Your Email")
+    isValid = false
+  } else if (!emailValidation(email)) {
+    setErrEmail('Enter valid email')
+    isValid = false
   }
 
+  if (!password) {
+    setErrPassword("Enter your password")
+    isValid = false
+  } else if (password.length < 6) {
+    setErrPassword("Password must be at least 6 characters")
+    isValid = false
+  }
+
+  if (!role) {
+    setErrRole("Please select your role")
+    isValid = false
+  }
+
+  if (!isValid) return
+
+  try {
+    const response = await api.post('/auth/login', {
+      email,
+      password,
+      role
+    })
+
+    const user = response.data
+    localStorage.setItem('user', JSON.stringify(user))
+
+    // Navigate based on role
+    if (user.role === 'admin') {
+      navigate('/admin')
+    } else {
+      navigate('/')
+    }
+
+  } catch (error) {
+    const msg = error.response?.data?.message || "Login failed"
+    setErrEmail(msg)
+  }
+}
   return (
     <div className='w-full'>
       <div className='w-full bg-gray-100 pb-10'>
