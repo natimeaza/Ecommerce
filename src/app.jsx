@@ -25,6 +25,7 @@ import ManageProducts from "./pages/ManageProducts";
 import ManageOrders from "./pages/ManageOrders";
 import ManageUsers from "./pages/ManageUsers";
 import SettingsPage from "./pages/Admin/SettingsPage";
+import SearchResults from "./pages/SearchResults";
 
 
 const Layout = () => {
@@ -52,6 +53,8 @@ function App() {
         {/* Authentication routes (typically don't have Header/Footer) */}
         <Route path="/SignIn" element={<SignIn />}></Route>
         <Route path="/Regestration" element={<Regestration />}></Route>
+        <Route path="/search" element={<SearchResults />} />
+
 
         {/* Admin Section with its own Layout */}
         <Route path="/admin" element={<AdminDashboardLayout />}> {/* Use the layout here */}

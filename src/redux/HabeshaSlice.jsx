@@ -1,43 +1,77 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    products: [],
-    userInfo:[]
-}
-export const habeshaSlice = createSlice({
-    name: "habesha",
-    initialState,
-    reducers: {
-       addToCart:(state, action) => {
-        const item = state.products.find((item) => item.id === action.payload.id);
-        if (item) { 
-            item.quantity += action.payload.quantity;
-        }else{
-            state.products.push(action.payload);
-        }   
-       },
-       incrememtQuantity:(state, action) => {
-       const item = state.products.find((item) => item.id === action.payload)
-       item.quantity += 1; 
-       },
-       decrementQuantity:(state, action) => {
-        const item = state.products.find((item) => item.id === action.payload);
-        if(item.quantity === 1){
-            item.quantity = 1;
-        }else{
-            item.quantity -= 1;
-        }
-       },
-       deleteItem:(state, action) => {
-        state.products = state.products.filter((item)=>item.id!== action.payload);
-    
-    },
+  cartProducts: JSON.parse(localStorage.getItem('cartProducts')) || [],
+  allApiProducts: [],
+  userInfo: [],
+  currentSearchTerm: "",
+  language: "EN",
+};
 
-       resetCart:(state)=>{
-        
-        state.products = [];
-       }
-    }
-})
-export const {addToCart,deleteItem,resetCart,incrememtQuantity,decrementQuantity} = habeshaSlice.actions;
+export const habeshaSlice = createSlice({
+  name: "habesha",
+  initialState,
+  reducers: {
+    addToCart: (state, action) => {
+     
+      const item = state.cartProducts.find((item) => item.id === action.payload.id);
+      if (item) {
+        item.quantity += action.payload.quantity;
+      } else {
+        state.cartProducts.push(action.payload);
+      }
+      localStorage.setItem('cartProducts', JSON.stringify(state.cartProducts));
+    },
+    incrementQuantity: (state, action) => {
+      const item = state.cartProducts.find((item) => item.id === action.payload);
+      if (item) {
+        item.quantity += 1;
+      }
+      localStorage.setItem('cartProducts', JSON.stringify(state.cartProducts));
+    },
+    decrementQuantity: (state, action) => {
+      const item = state.cartProducts.find((item) => item.id === action.payload);
+      if (item) {
+        if (item.quantity === 1) {
+        } else {
+          item.quantity -= 1;
+        }
+      }
+      localStorage.setItem('cartProducts', JSON.stringify(state.cartProducts));
+    },
+    deleteItem: (state, action) => {
+      state.cartProducts = state.cartProducts.filter((item) => item.id !== action.payload);
+      localStorage.setItem('cartProducts', JSON.stringify(state.cartProducts));
+    },
+    resetCart: (state) => {
+      state.cartProducts = [];
+      localStorage.setItem('cartProducts', JSON.stringify(state.cartProducts));
+    },
+    setAllProducts: (state, action) => {
+      state.allApiProducts = action.payload;
+    },
+    setUserInfo: (state, action) => {
+      state.userInfo = action.payload;
+    },
+    setSearchTerm: (state, action) => {
+      state.currentSearchTerm = action.payload;
+    },
+    setLanguage: (state, action) => {
+      state.language = action.payload;
+    },
+  },
+});
+
+export const {
+  addToCart,
+  deleteItem,
+  resetCart,
+  incrementQuantity,
+  decrementQuantity,
+  setAllProducts,
+  setUserInfo,
+  setSearchTerm,
+  setLanguage,
+} = habeshaSlice.actions;
+
 export default habeshaSlice.reducer;

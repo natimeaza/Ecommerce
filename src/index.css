@@ -2,7 +2,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic&display=swap');
 
+body {
+  font-family: 'Noto Sans Ethiopic', sans-serif;
+}
 
 @layer components{
     .headerHover{
