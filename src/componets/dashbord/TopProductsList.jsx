@@ -28,7 +28,7 @@ const TopProductsList = ({ products }) => {
         ))}
       </ul>
       <button
-        // onClick={handleViewAllProducts}
+        onClick={() => window.location.href = '/admin/products'}        
         className="mt-4 w-full text-center text-sm text-habesha_blue hover:underline font-medium flex items-center justify-center"
       >
         View All Products <FiExternalLink size={14} className="ml-1" />

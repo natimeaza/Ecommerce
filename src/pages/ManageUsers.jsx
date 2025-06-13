@@ -1,14 +1,13 @@
 // src/pages/ManageUsers.jsx
 import React, { useState, useEffect, useCallback } from 'react';
-// import { useNavigate } from 'react-router-dom';
-
 import UserListHeader from '../componets/users/UserListHeader';
 import UserFilters from '../componets/users/UserFilters';
 import UserTable from '../componets/users/UserTable';
-import NoProductsFound from '../componets/products/NoProductsFound'; // Reusing this
-import PaginationControls from '../componets/common/PaginationControls';
+import NoUsersFound from '../componets/users/NoUsersFound';
+import PaginationControls from '../componets/products/PaginationControls'; // Adjust path if in common/
+import AddUserModal from '../componets/users/AddUserModal';
 import userService from '../service/userService';
-import { FiLoader, FiAlertTriangle, FiUsers as FiUsersIcon } from 'react-icons/fi';
+import { FiLoader, FiAlertTriangle } from 'react-icons/fi';
 
 const USERS_PER_PAGE = 6;
 
@@ -16,28 +15,20 @@ const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const navigate = useNavigate();
-
-  // Filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
-  
   const [userRoles, setUserRoles] = useState([]);
   const [userStatuses, setUserStatuses] = useState([]);
-
-  // Selection
   const [selectedUsers, setSelectedUsers] = useState([]);
-
-  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     setError(null);
-    // setSelectedUsers([]); // Optional: clear selection on fetch
     try {
       const params = {
         page: currentPage,
@@ -51,8 +42,8 @@ const ManageUsers = () => {
       setTotalUsers(response.data.totalUsers);
       setTotalPages(response.data.totalPages);
     } catch (err) {
-      console.error("Failed to fetch users:", err);
-      setError("Failed to load users. Please try again.");
+      console.error('Failed to fetch users:', err);
+      setError('Failed to load users. Please try again.');
       setUsers([]);
       setTotalUsers(0);
       setTotalPages(0);
@@ -72,53 +63,72 @@ const ManageUsers = () => {
           userService.getUniqueUserRoles(),
           userService.getUniqueUserStatuses(),
         ]);
-        setUserRoles(roleRes.data);
-        setUserStatuses(statusRes.data);
+        setUserRoles(['All', ...roleRes.data]);
+        setUserStatuses(['All', ...statusRes.data]);
       } catch (err) {
-        console.error("Failed to fetch user filter options:", err);
-        setUserRoles([...new Set(userService.initialMockUsers.map(u => u.role))].sort());
-        setUserStatuses([...new Set(userService.initialMockUsers.map(u => u.status))].sort());
+        console.error('Failed to fetch user filter options:', err);
+        setUserRoles(['All', ...[...new Set(userService.initialMockUsers.map((u) => u.role))].sort()]);
+        setUserStatuses(['All', ...[...new Set(userService.initialMockUsers.map((u) => u.status))].sort()]);
       }
     };
     fetchFilterOptions();
   }, []);
 
   // Filter change handlers
-  const handleSearchChange = (e) => { setSearchTerm(e.target.value); setCurrentPage(1); };
-  const handleRoleChange = (e) => { setFilterRole(e.target.value); setCurrentPage(1); };
-  const handleStatusChange = (e) => { setFilterStatus(e.target.value); setCurrentPage(1); };
-  
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+  const handleRoleChange = (e) => {
+    setFilterRole(e.target.value);
+    setCurrentPage(1);
+  };
+  const handleStatusChange = (e) => {
+    setFilterStatus(e.target.value);
+    setCurrentPage(1);
+  };
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages && pageNumber !== currentPage) {
       setCurrentPage(pageNumber);
     }
   };
 
-  // --- User Actions ---
-  const handleAddUser = () => {
-    // navigate('/admin/users/new');
-    alert('Implement Add User: Open form/modal, then call userService.addUser() and refresh list.');
-    // Example: const newUser = await userService.addUser(dataFromForm); if (newUser) fetchUsers();
-  };
+  // User Actions
+  const handleAddUser = async (userData) => {
+  console.log('handleAddUser called with:', userData);
+  try {
+    setLoading(true);
+    const response = await userService.addUser(userData);
+    console.log('User added to service:', response.data);
+    setIsModalOpen(false);
+    setCurrentPage(1);
+    setSearchTerm('');
+    setFilterRole('All');
+    setFilterStatus('All');
+    fetchUsers();
+  } catch (error) {
+    console.error('Failed to add user:', error);
+    alert(`Failed to add user: ${error.message || 'Server error'}`);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleViewUserDetails = async (userId) => {
-    // navigate(`/admin/users/${userId}`);
-     try {
-        setLoading(true);
-        const response = await userService.getUserById(userId);
-        const userDetails = response.data;
-        alert(`Viewing details for User ID: ${userId}\nName: ${userDetails.name}\nEmail: ${userDetails.email}\nRole: ${userDetails.role}`);
-        console.log("User Details:", userDetails);
+    try {
+      setLoading(true);
+      const response = await userService.getUserById(userId);
+      const userDetails = response.data;
+      alert(`User Details:\nID: ${userDetails.id}\nName: ${userDetails.name}\nEmail: ${userDetails.email}\nRole: ${userDetails.role}\nStatus: ${userDetails.status}\nJoined: ${userDetails.dateJoined}\nLast Login: ${userDetails.lastLogin || 'N/A'}`);
     } catch (err) {
-        alert(`Could not fetch details for user ${userId}.`);
-        console.error("Failed to fetch user details:", err);
+      console.error('Failed to fetch user details:', err);
+      alert(`Could not fetch details for user ${userId}.`);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
   const handleEditUser = (userId) => {
-    // navigate(`/admin/users/edit/${userId}`);
     alert(`Implement Edit User ID: ${userId}. Open form/modal, call userService.updateUser() and refresh.`);
   };
 
@@ -127,16 +137,40 @@ const ManageUsers = () => {
       try {
         setLoading(true);
         await userService.deleteUser(userId);
-        alert(`User ${userId} deleted.`);
-        setSelectedUsers(prev => prev.filter(id => id !== userId));
+        setSelectedUsers((prev) => prev.filter((id) => id !== userId));
         if (users.length === 1 && currentPage > 1) {
-            setCurrentPage(prev => prev - 1);
+          setCurrentPage((prev) => prev - 1);
         } else {
-            fetchUsers();
+          fetchUsers();
         }
       } catch (err) {
-        console.error("Failed to delete user:", err);
-        alert(`Failed to delete user ${userId}.`);
+        console.error('Failed to delete user:', err);
+        alert(`Failed to delete user ${userId}: ${err.message || 'Server error'}`);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleDeleteSelectedUsers = async () => {
+    if (selectedUsers.length === 0) {
+      alert('No users selected.');
+      return;
+    }
+    if (window.confirm(`Are you sure you want to delete ${selectedUsers.length} selected user(s)?`)) {
+      try {
+        setLoading(true);
+        await userService.deleteMultipleUsers(selectedUsers);
+        setSelectedUsers([]);
+        if (users.length === selectedUsers.length && currentPage > 1) {
+          setCurrentPage((prev) => prev - 1);
+        } else {
+          fetchUsers();
+        }
+      } catch (err) {
+        console.error('Failed to delete selected users:', err);
+        alert(`Failed to delete selected users: ${err.message || 'Server error'}`);
+      } finally {
         setLoading(false);
       }
     }
@@ -147,20 +181,20 @@ const ManageUsers = () => {
       try {
         setLoading(true);
         await userService.updateUserStatus(userId, newStatus);
-        alert(`User ${userId} status updated to ${newStatus}.`);
-        fetchUsers(); // Refetch to reflect changes
+        fetchUsers();
       } catch (err) {
-        console.error("Failed to update user status:", err);
-        alert(`Failed to update status for user ${userId}.`);
+        console.error('Failed to update user status:', err);
+        alert(`Failed to update status for user ${userId}: ${err.message || 'Server error'}`);
+      } finally {
         setLoading(false);
       }
     }
   };
 
-  // --- Selection Logic ---
+  // Selection Logic
   const handleSelectAll = (event) => {
     if (event.target.checked) {
-      setSelectedUsers(users.map(u => u.id));
+      setSelectedUsers(users.map((u) => u.id));
     } else {
       setSelectedUsers([]);
     }
@@ -168,9 +202,9 @@ const ManageUsers = () => {
 
   const handleSelectUser = (event, userId) => {
     if (event.target.checked) {
-      setSelectedUsers(prev => [...prev, userId]);
+      setSelectedUsers((prev) => [...prev, userId]);
     } else {
-      setSelectedUsers(prev => prev.filter(id => id !== userId));
+      setSelectedUsers((prev) => prev.filter((id) => id !== userId));
     }
   };
 
@@ -204,11 +238,10 @@ const ManageUsers = () => {
     if (users.length === 0 && !loading) {
       const isFiltered = searchTerm || filterRole !== 'All' || filterStatus !== 'All';
       return (
-        <div className="text-center py-12 text-gray-500">
-            <FiUsersIcon size={48} className="mx-auto mb-3 text-gray-400" />
-            <p className="text-lg font-medium">{isFiltered ? "No users match your criteria" : "No users found"}</p>
-            <p className="text-sm">{isFiltered ? "Try adjusting your search or filters." : "Add a new user to get started!"}</p>
-        </div>
+        <NoUsersFound
+          message={isFiltered ? 'No users match your criteria' : 'No users found'}
+          subMessage={isFiltered ? 'Try adjusting your search or filters.' : 'Add a new user to get started!'}
+        />
       );
     }
     return (
@@ -227,9 +260,8 @@ const ManageUsers = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <UserListHeader onAddUser={handleAddUser} />
-
+    <div className="max-w-screen-2xl mx-auto px-4 py-6 space-y-6">
+      <UserListHeader onAddUser={() => setIsModalOpen(true)} />
       <UserFilters
         searchTerm={searchTerm}
         onSearchChange={handleSearchChange}
@@ -240,17 +272,15 @@ const ManageUsers = () => {
         onStatusChange={handleStatusChange}
         statuses={userStatuses}
         selectedUsersCount={selectedUsers.length}
+        onDeleteSelected={handleDeleteSelectedUsers}
       />
-      
       {loading && users.length > 0 && (
         <div className="flex justify-center items-center py-4">
-            <FiLoader className="animate-spin text-habesha_blue h-6 w-6" />
-            <span className="ml-2 text-sm text-gray-600">Refreshing data...</span>
+          <FiLoader className="animate-spin text-habesha_blue h-6 w-6" />
+          <span className="ml-2 text-sm text-gray-600">Refreshing data...</span>
         </div>
       )}
-
       {renderContent()}
-
       {!error && users.length > 0 && totalPages > 0 && (
         <PaginationControls
           currentPage={currentPage}
@@ -259,6 +289,7 @@ const ManageUsers = () => {
           totalItems={totalUsers}
         />
       )}
+      <AddUserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAddUser={handleAddUser} />
     </div>
   );
 };

@@ -132,30 +132,43 @@ const Registration = () => {
   };
 
   return (
-    <div lang={language === 'EN' ? 'en' : 'am'} className="w-full">
-      <div className="w-full bg-gray-100 pb-10">
-        <form className="w-[370px] mx-auto flex flex-col items-center">
+    <div lang={language === 'EN' ? 'en' : 'am'} className="w-full min-h-screen bg-gray-100">
+      <div className="max-w-[container] mx-auto px-4 xs:px-6 sm:px-8 py-6">
+        <form className="w-full max-w-md mx-auto flex flex-col items-center">
           {/* Return to Home Icon */}
           <div className="w-full flex justify-start mb-4">
             <Link to="/" title={currentText.returnToHome}>
-              <div className="group cursor-pointer flex items-center gap-1 text-gray-600 hover:text-habesha_blue">
-                <HomeIcon className="text-2xl" />
-                <span className="text-sm group-hover:underline">{currentText.returnToHome}</span>
+              <div className="group cursor-pointer flex items-center gap-1 text-habesha_blue hover:text-orange-700">
+                <HomeIcon className="text-xl xs:text-2xl" />
+                <span className="text-xs xs:text-sm group-hover:underline">{currentText.returnToHome}</span>
               </div>
             </Link>
           </div>
 
-          <img className="w-46 py-4 rounded-t-md" src={HabeshaLogo} alt="logo" />
-          <div className="w-full border border-zinc-200 p-6">
-            <h2 className="font-titleFont text-3xl font-medium mb-4">{currentText.createAccount}</h2>
+          {/* Logo */}
+          <img
+            className="w-32 xs:w-36 sm:w-40 md:w-48 py-4 rounded-t-md"
+            src={HabeshaLogo}
+            alt="Habesha Logo"
+          />
+
+          {/* Form Container */}
+          <div className="w-full bg-habesha_white border border-zinc-200 p-4 xs:p-6 rounded-md">
+            <h2 className="font-titleFont text-2xl xs:text-3xl font-semibold mb-4 text-habesha_blue">
+              {currentText.createAccount}
+            </h2>
             <div className="flex flex-col gap-3">
+              {/* Name */}
               <div className="flex flex-col gap-2">
-                <p className="text-sm font-medium">{currentText.yourName}</p>
+                <p className="text-sm xs:text-base font-medium text-habesha_blue">
+                  {currentText.yourName}
+                </p>
                 <input
                   value={clientName}
                   onChange={handleName}
-                  className="w-full py-1 border border-zinc-400 px-2 text-base rounded-sm outline-none focus-within:border-[#e77600] focus-within:shadow-habeshaInput duration-100"
+                  className="w-full py-2 xs:py-2.5 border border-zinc-400 px-3 text-sm xs:text-base rounded-sm outline-none focus-within:border-habesha_yellow focus-within:shadow-habeshaInput duration-100"
                   type="text"
+                  placeholder={currentText.enterYourName}
                 />
                 {errClientName && (
                   <p className="text-red-600 text-xs font-semibold tracking-wide flex items-center gap-2 -mt-1.5">
@@ -164,13 +177,18 @@ const Registration = () => {
                   </p>
                 )}
               </div>
+
+              {/* Email */}
               <div className="flex flex-col gap-2">
-                <p className="text-sm font-medium">{currentText.emailOrPhone}</p>
+                <p className="text-sm xs:text-base font-medium text-habesha_blue">
+                  {currentText.emailOrPhone}
+                </p>
                 <input
                   value={email}
                   onChange={handleEmail}
-                  className="w-full py-1 border border-zinc-400 px-2 text-base rounded-sm outline-none focus-within:border-[#e77600] focus-within:shadow-habeshaInput duration-100"
+                  className="w-full py-2 xs:py-2.5 border border-zinc-400 px-3 text-sm xs:text-base rounded-sm outline-none focus-within:border-habesha_yellow focus-within:shadow-habeshaInput duration-100"
                   type="email"
+                  placeholder={currentText.enterYourEmail}
                 />
                 {errEmail && (
                   <p className="text-red-600 text-xs font-semibold tracking-wide flex items-center gap-2 -mt-1.5">
@@ -179,13 +197,18 @@ const Registration = () => {
                   </p>
                 )}
               </div>
+
+              {/* Password */}
               <div className="flex flex-col gap-2">
-                <p className="text-sm font-medium">{currentText.password}</p>
+                <p className="text-sm xs:text-base font-medium text-habesha_blue">
+                  {currentText.password}
+                </p>
                 <input
                   value={password}
                   onChange={handlePassword}
-                  className="w-full py-1 border border-zinc-400 px-2 text-base rounded-sm outline-none focus-within:border-[#e77600] focus-within:shadow-habeshaInput duration-100"
+                  className="w-full py-2 xs:py-2.5 border border-zinc-400 px-3 text-sm xs:text-base rounded-sm outline-none focus-within:border-habesha_yellow focus-within:shadow-habeshaInput duration-100"
                   type="password"
+                  placeholder={currentText.enterPassword}
                 />
                 {errPassword && (
                   <p className="text-red-600 text-xs font-semibold tracking-wide flex items-center gap-2 -mt-1.5">
@@ -194,13 +217,18 @@ const Registration = () => {
                   </p>
                 )}
               </div>
+
+              {/* Confirm Password */}
               <div className="flex flex-col gap-2">
-                <p className="text-sm font-medium">{currentText.reEnterPassword}</p>
+                <p className="text-sm xs:text-base font-medium text-habesha_blue">
+                  {currentText.reEnterPassword}
+                </p>
                 <input
                   value={cPassword}
                   onChange={handleCPassword}
-                  className="w-full py-1 border border-zinc-400 px-2 text-base rounded-sm outline-none focus-within:border-[#e77600] focus-within:shadow-habeshaInput duration-100"
+                  className="w-full py-2 xs:py-2.5 border border-zinc-400 px-3 text-sm xs:text-base rounded-sm outline-none focus-within:border-habesha_yellow focus-within:shadow-habeshaInput duration-100"
                   type="password"
+                  placeholder={currentText.confirmPassword}
                 />
                 {errCPassword && (
                   <p className="text-red-600 text-xs font-semibold tracking-wide flex items-center gap-2 -mt-1.5">
@@ -208,31 +236,39 @@ const Registration = () => {
                     {errCPassword}
                   </p>
                 )}
-                {errEmail ? (
-                  <></>
-                ) : (
-                  <p className="text-xs text-gray-600">{currentText.passwordHint}</p>
+                {!errEmail && (
+                  <p className="text-xs xs:text-sm text-gray-600">{currentText.passwordHint}</p>
                 )}
               </div>
+
+              {/* Submit Button */}
               <button
                 onClick={handleRegistration}
-                className="w-full py-1.5 text-sm font-normal rounded-sm bg-gradient-to-t from-[#f7dfa5] to-[#f0c14b] hover:bg-gradient-to-b border border-zinc-400 active:border-yellow-800 active:shadow-habeshaInput"
+                className="w-full py-2 xs:py-2.5 text-sm xs:text-base font-normal rounded-sm bg-gradient-to-t from-habesha_yellow to-[#f0c14b] hover:bg-gradient-to-b border border-zinc-400 active:border-yellow-800 active:shadow-habeshaInput"
               >
                 {currentText.continue}
               </button>
             </div>
-            <p className="text-xs text-black leading-4 mt-4">
+
+            {/* Agreement Text */}
+            <p className="text-xs xs:text-sm text-habesha_blue leading-4 mt-4">
               {currentText.agreement}{' '}
-              <span className="text-blue-600">{currentText.conditionsOfUse}</span>{' '}
+              <Link to="/conditions" className="text-blue-600 hover:text-orange-700 hover:underline">
+                {currentText.conditionsOfUse}
+              </Link>{' '}
               {language === 'EN' ? 'and' : 'እና'}{' '}
-              <span className="text-blue-600">{currentText.privacyNotice}</span>.
+              <Link to="/privacy" className="text-blue-600 hover:text-orange-700 hover:underline">
+                {currentText.privacyNotice}
+              </Link>.
             </p>
-            <div className="text-xs text-black">
-              <p className="mt-1">
+
+            {/* Sign In Link */}
+            <div className="text-xs xs:text-sm text-habesha_blue mt-4">
+              <p>
                 {currentText.alreadyHaveAccount}{' '}
                 <Link to="/SignIn">
-                  <span className="text-xs text-blue-600 hover:text-orange-600 hover:underline underline-offset-1 cursor-pointer duration-100">
-                    {currentText.signIn} <ArrowRightIcon />
+                  <span className="text-blue-600 hover:text-orange-700 hover:underline underline-offset-1 cursor-pointer duration-100">
+                    {currentText.signIn} <ArrowRightIcon className="inline-block" />
                   </span>
                 </Link>
               </p>
@@ -240,19 +276,27 @@ const Registration = () => {
           </div>
         </form>
       </div>
-      <div className="w-full bg-gradient-to-t from-white via-white to-zinc-200 flex flex-col gap-4 justify-center items-center py-10">
-        <div className="flex items-center gap-6">
-          <p className="text-xs text-blue-600 hover:text-orange-600 hover:underline cursor-pointer duration-100">
-            {currentText.conditionsOfUse}
-          </p>
-          <p className="text-xs text-blue-600 hover:text-orange-600 hover:underline cursor-pointer duration-100">
-            {currentText.privacyNotice}
-          </p>
-          <p className="text-xs text-blue-600 hover:text-orange-600 hover:underline cursor-pointer duration-100">
-            {currentText.help}
-          </p>
+
+      {/* Footer */}
+      <div className="w-full bg-gradient-to-t from-habesha_white via-habesha_white to-zinc-200 flex flex-col items-center py-8 xs:py-10">
+        <div className="flex flex-col xs:flex-row items-center gap-4 xs:gap-6">
+          <Link to="/conditions">
+            <p className="text-xs xs:text-sm text-blue-600 hover:text-orange-600 hover:underline cursor-pointer">
+              {currentText.conditionsOfUse}
+            </p>
+          </Link>
+          <Link to="/privacy">
+            <p className="text-xs xs:text-sm text-blue-600 hover:text-orange-600 hover:underline cursor-pointer">
+              {currentText.privacyNotice}
+            </p>
+          </Link>
+          <Link to="/help">
+            <p className="text-xs xs:text-sm text-blue-600 hover:text-orange-600 hover:underline cursor-pointer">
+              {currentText.help}
+            </p>
+          </Link>
         </div>
-        <p className="text-xs text-gray-600">{currentText.footer}</p>
+        <p className="text-xs xs:text-sm text-gray-600 mt-4">{currentText.footer}</p>
       </div>
     </div>
   );

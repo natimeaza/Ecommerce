@@ -138,23 +138,35 @@ const SignIn = () => {
     }
   };
 
+  
   return (
-    <div lang={language === 'EN' ? 'en' : 'am'} className="w-full">
-      <div className="w-full bg-gray-100 pb-10">
-        <form className="w-[350px] mx-auto flex flex-col items-center">
-          
-          <img className="w-46 py-4 rounded-t-md" src={HabeshaLogo} alt="logo" />
-          <div className="w-full border border-zinc-200 p-6">
-            <h2 className="font-titleFont text-3xl mb-4">{currentText.signIn}</h2>
+    <div lang={language === 'EN' ? 'en' : 'am'} className="w-full min-h-screen bg-gray-100">
+      <div className="max-w-[container] mx-auto px-4 xs:px-6 sm:px-8 py-6">
+        <form className="w-full max-w-md mx-auto flex flex-col items-center">
+          {/* Logo */}
+          <img
+            className="w-32 xs:w-36 sm:w-40 md:w-48 py-4 rounded-t-md"
+            src={HabeshaLogo}
+            alt="Habesha Logo"
+          />
+
+          {/* Form Container */}
+          <div className="w-full bg-habesha_white border border-zinc-200 p-4 xs:p-6 rounded-md">
+            <h2 className="font-titleFont text-2xl xs:text-3xl font-semibold mb-4 text-habesha_blue">
+              {currentText.signIn}
+            </h2>
             <div className="flex flex-col gap-3">
               {/* Email */}
               <div className="flex flex-col gap-2">
-                <p className="text-sm font-medium pb-2">{currentText.email}</p>
+                <p className="text-sm xs:text-base font-medium text-habesha_blue">
+                  {currentText.email}
+                </p>
                 <input
                   onChange={handleEmail}
                   value={email}
-                  className="w-full lowercase py-1 border border-zinc-400 px-2 text-base rounded-sm outline-none focus-within:border-[#e77600] focus-within:shadow-habeshaInput duration-100"
+                  className="w-full py-2 xs:py-2.5 border border-zinc-400 px-3 text-sm xs:text-base rounded-sm outline-none focus-within:border-habesha_yellow focus-within:shadow-habeshaInput duration-100"
                   type="email"
+                  placeholder={currentText.enterEmail}
                 />
                 {errEmail && (
                   <p className="text-red-600 text-xs font-semibold tracking-wide flex items-center gap-2 -mt-1.5">
@@ -166,12 +178,15 @@ const SignIn = () => {
 
               {/* Password */}
               <div className="flex flex-col gap-2">
-                <p className="text-sm font-medium pb-2">{currentText.password}</p>
+                <p className="text-sm xs:text-base font-medium text-habesha_blue">
+                  {currentText.password}
+                </p>
                 <input
                   onChange={handlePassword}
                   value={password}
-                  className="w-full py-1 border border-zinc-400 px-2 text-base rounded-sm outline-none focus-within:border-[#e77600] focus-within:shadow-habeshaInput duration-100"
+                  className="w-full py-2 xs:py-2.5 border border-zinc-400 px-3 text-sm xs:text-base rounded-sm outline-none focus-within:border-habesha_yellow focus-within:shadow-habeshaInput duration-100"
                   type="password"
+                  placeholder={currentText.enterPassword}
                 />
                 {errPassword && (
                   <p className="text-red-600 text-xs font-semibold tracking-wide flex items-center gap-2 -mt-1.5">
@@ -183,11 +198,13 @@ const SignIn = () => {
 
               {/* Role Dropdown */}
               <div className="flex flex-col gap-2">
-                <p className="text-sm font-medium pb-2">{currentText.selectRole}</p>
+                <p className="text-sm xs:text-base font-medium text-habesha_blue">
+                  {currentText.selectRole}
+                </p>
                 <select
                   onChange={handleRole}
                   value={role}
-                  className="w-full py-1 border border-zinc-400 px-2 text-base rounded-sm outline-none focus-within:border-[#e77600] focus-within:shadow-habeshaInput duration-100"
+                  className="w-full py-2 xs:py-2.5 border border-zinc-400 px-3 text-sm xs:text-base rounded-sm outline-none focus-within:border-habesha_yellow focus-within:shadow-habeshaInput duration-100"
                 >
                   <option value="">{currentText.rolePlaceholder}</option>
                   <option value="user">{currentText.userRole}</option>
@@ -204,57 +221,75 @@ const SignIn = () => {
               {/* Submit Button */}
               <button
                 onClick={handleSignIn}
-                className="w-full py-1.5 text-sm font-normal rounded-sm bg-gradient-to-t from-[#f7dfa5] to-[#f0c14b] hover:bg-gradient-to-b border border-zinc-400 active:border-yellow-800 active:shadow-habeshaInput"
+                className="w-full py-2 xs:py-2.5 text-sm xs:text-base font-normal rounded-sm bg-gradient-to-t from-habesha_yellow to-[#f0c14b] hover:bg-gradient-to-b border border-zinc-400 active:border-yellow-800 active:shadow-habeshaInput"
               >
                 {currentText.continue}
               </button>
             </div>
 
-            <p className="text-xs text-black leading-4 mt-4">
+            {/* Agreement Text */}
+            <p className="text-xs xs:text-sm text-habesha_blue leading-4 mt-4">
               {currentText.agreement}{' '}
-              <span className="text-blue-600">{currentText.conditionsOfUse}</span>{' '}
+              <Link to="/conditions" className="text-blue-600 hover:text-orange-700 hover:underline">
+                {currentText.conditionsOfUse}
+              </Link>{' '}
               {language === 'EN' ? 'and' : 'እና'}{' '}
-              <span className="text-blue-600">{currentText.privacyNotice}</span>.
+              <Link to="/privacy" className="text-blue-600 hover:text-orange-700 hover:underline">
+                {currentText.privacyNotice}
+              </Link>.
             </p>
-            <p className="text-xm text-gray-600 mt-4 cursor-pointer group">
-              <ArrowRightIcon />
+
+            {/* Need Help Link */}
+            <p className="text-xs xs:text-sm text-gray-600 mt-4 cursor-pointer group">
+              <ArrowRightIcon className="inline-block" />
               <span className="text-blue-600 group-hover:text-orange-700 group-hover:underline underline-offset-1">
                 {currentText.needHelp}
               </span>
             </p>
           </div>
 
-          <p className="w-full text-xs text-gray-600 mt-4 flex items-center">
+          {/* Create Account Section */}
+          <p className="w-full text-xs xs:text-sm text-gray-600 mt-4 flex items-center">
             <span className="w-1/3 h-[1px] bg-zinc-400 inline-flex"></span>
             <span className="w-1/3 text-center">{currentText.newToHabesha}</span>
             <span className="w-1/3 h-[1px] bg-zinc-400 inline-flex"></span>
           </p>
 
           <Link className="w-full" to="/Regestration">
-            <button className="w-full py-1.5 mt-4 text-sm font-normal rounded-sm bg-gradient-to-t from-slate-200 to-slate-100 hover:bg-gradient-to-b border border-zinc-400 active:border-yellow-800 active:shadow-habeshaInput">
+            <button className="w-full py-2 xs:py-2.5 mt-4 text-sm xs:text-base font-normal rounded-sm bg-gradient-to-t from-slate-200 to-slate-100 hover:bg-gradient-to-b border border-zinc-400 active:border-yellow-800 active:shadow-habeshaInput">
               {currentText.createAccount}
             </button>
+          </Link>
+
+          {/* Home Button */}
+          <Link to="/" className="mt-4 flex items-center gap-1 text-blue-600 hover:text-orange-700 hover:underline">
+            <HomeIcon className="text-habesha_blue" />
+            <span className="text-xs xs:text-sm">{currentText.returnToHome}</span>
           </Link>
         </form>
       </div>
 
-      
-
-      <div className="w-full bg-gradient-to-t from-white via-white to-zinc-200 flex flex-col gap-4 justify-center items-center py-10">
-        <div className="flex items-center gap-6">
-          <p className="text-xs text-blue-600 hover:text-orange-600 hover:underline cursor-pointer">
-            {currentText.conditionsOfUse}
-          </p>
-          <p className="text-xs text-blue-600 hover:text-orange-600 hover:underline cursor-pointer">
-            {currentText.privacyNotice}
-          </p>
-          <p className="text-xs text-blue-600 hover:text-orange-600 hover:underline cursor-pointer">
-            {currentText.help}
-          </p>
+      {/* Footer */}
+      <div className="w-full bg-gradient-to-t from-habesha_white via-habesha_white to-zinc-200 flex flex-col items-center py-8 xs:py-10">
+        <div className="flex flex-col xs:flex-row items-center gap-4 xs:gap-6">
+          <Link to="/conditions">
+            <p className="text-xs xs:text-sm text-blue-600 hover:text-orange-600 hover:underline cursor-pointer">
+              {currentText.conditionsOfUse}
+            </p>
+          </Link>
+          <Link to="/privacy">
+            <p className="text-xs xs:text-sm text-blue-600 hover:text-orange-600 hover:underline cursor-pointer">
+              {currentText.privacyNotice}
+            </p>
+          </Link>
+          <Link to="/help">
+            <p className="text-xs xs:text-sm text-blue-600 hover:text-orange-600 hover:underline cursor-pointer">
+              {currentText.help}
+            </p>
+          </Link>
         </div>
-        <p className="text-xs text-gray-600">{currentText.footer}</p>
+        <p className="text-xs xs:text-sm text-gray-600 mt-4">{currentText.footer}</p>
       </div>
-
     </div>
   );
 };

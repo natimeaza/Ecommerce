@@ -64,7 +64,7 @@ function App() {
           <Route path="products" element={<ManageProducts />} />
           <Route path="orders" element={<ManageOrders />} />
           <Route path="users" element={<ManageUsers />} />
-           <Route path="setting" element={<SettingsPage />} />
+           <Route path="settings" element={<SettingsPage />} />
 
           {/* Add other nested admin routes here */}
         </Route>

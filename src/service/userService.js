@@ -15,7 +15,7 @@ const initialMockUsers = [
 
 let mockUsersStore = [...initialMockUsers];
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const getUsers = async (params = {}) => {
   if (USE_MOCK_API) {
@@ -24,23 +24,20 @@ const getUsers = async (params = {}) => {
 
     if (params.searchTerm) {
       const term = params.searchTerm.toLowerCase();
-      filtered = filtered.filter(u =>
-        u.name.toLowerCase().includes(term) ||
-        u.email.toLowerCase().includes(term) ||
-        u.id.toLowerCase().includes(term)
+      filtered = filtered.filter(
+        (u) => u.name.toLowerCase().includes(term) || u.email.toLowerCase().includes(term) || u.id.toLowerCase().includes(term)
       );
     }
     if (params.role && params.role !== 'All') {
-      filtered = filtered.filter(u => u.role === params.role);
+      filtered = filtered.filter((u) => u.role === params.role);
     }
     if (params.status && params.status !== 'All') {
-      filtered = filtered.filter(u => u.status === params.status);
+      filtered = filtered.filter((u) => u.status === params.status);
     }
-    // Add sorting if needed
 
     const totalUsers = filtered.length;
     const page = params.page || 1;
-    const limit = params.limit || 6; // Default limit
+    const limit = params.limit || 6;
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
     const paginatedUsers = filtered.slice(startIndex, endIndex);
@@ -51,87 +48,102 @@ const getUsers = async (params = {}) => {
 };
 
 const getUserById = async (userId) => {
-    if (USE_MOCK_API) {
-        await delay(200);
-        const user = mockUsersStore.find(u => u.id === userId);
-        return { data: user };
-    }
-    return axios.get(`${API_URL}/${userId}`);
+  if (USE_MOCK_API) {
+    await delay(200);
+    const user = mockUsersStore.find((u) => u.id === userId);
+    return { data: user };
+  }
+  return axios.get(`${API_URL}/${userId}`);
 };
-
 const addUser = async (userData) => {
-    if (USE_MOCK_API) {
-        await delay(300);
-        const newUser = {
-            ...userData,
-            id: `U${Date.now().toString().slice(-4)}`,
-            dateJoined: new Date().toISOString().split('T')[0],
-            lastLogin: new Date().toISOString().split('T')[0], // Or null
-            avatar: userData.avatar || `https://via.placeholder.com/40/CCCCCC/FFFFFF?text=${userData.name.substring(0,2).toUpperCase()}`,
-            status: userData.status || 'Active'
-        };
-        mockUsersStore = [newUser, ...mockUsersStore];
-        return { data: newUser };
-    }
-    return axios.post(API_URL, userData);
+  if (USE_MOCK_API) {
+    console.log('userService.addUser received:', userData);
+    await delay(300);
+    const nameForAvatar = userData.name && userData.name.trim() ? userData.name.substring(0, 2).toUpperCase() : 'NA';
+    const newUser = {
+      ...userData,
+      name: userData.name || 'Unnamed User', // Fallback name
+      id: `U${Date.now().toString().slice(-4)}`,
+      dateJoined: new Date().toISOString().split('T')[0],
+      lastLogin: new Date().toISOString().split('T')[0],
+      avatar: userData.avatar || `https://via.placeholder.com/40/CCCCCC/FFFFFF?text=${nameForAvatar}`,
+      status: userData.status || 'Active',
+    };
+    mockUsersStore = [newUser, ...mockUsersStore];
+    console.log('New user added to mockUsersStore:', newUser);
+    console.log('Updated mockUsersStore:', mockUsersStore);
+    return { data: newUser };
+  }
+  return axios.post(API_URL, userData);
 };
 
 const updateUser = async (userId, userData) => {
-    if (USE_MOCK_API) {
-        await delay(300);
-        mockUsersStore = mockUsersStore.map(u => u.id === userId ? { ...u, ...userData } : u);
-        const updatedUser = mockUsersStore.find(u => u.id === userId);
-        return { data: updatedUser };
-    }
-    return axios.put(`${API_URL}/${userId}`, userData);
+  if (USE_MOCK_API) {
+    await delay(300);
+    mockUsersStore = mockUsersStore.map((u) => (u.id === userId ? { ...u, ...userData } : u));
+    const updatedUser = mockUsersStore.find((u) => u.id === userId);
+    return { data: updatedUser };
+  }
+  return axios.put(`${API_URL}/${userId}`, userData);
 };
 
 const updateUserStatus = async (userId, newStatus) => {
-    if (USE_MOCK_API) {
-        await delay(300);
-        mockUsersStore = mockUsersStore.map(u => u.id === userId ? { ...u, status: newStatus } : u);
-        const updatedUser = mockUsersStore.find(u => u.id === userId);
-        return { data: updatedUser };
-    }
-    return axios.patch(`${API_URL}/${userId}/status`, { status: newStatus }); // Or a general update
+  if (USE_MOCK_API) {
+    await delay(300);
+    mockUsersStore = mockUsersStore.map((u) => (u.id === userId ? { ...u, status: newStatus } : u));
+    const updatedUser = mockUsersStore.find((u) => u.id === userId);
+    return { data: updatedUser };
+  }
+  return axios.patch(`${API_URL}/${userId}/status`, { status: newStatus });
 };
 
 const deleteUser = async (userId) => {
-    if (USE_MOCK_API) {
-        await delay(300);
-        mockUsersStore = mockUsersStore.filter(u => u.id !== userId);
-        return { data: { message: 'User deleted successfully' } };
-    }
-    return axios.delete(`${API_URL}/${userId}`);
+  if (USE_MOCK_API) {
+    await delay(300);
+    mockUsersStore = mockUsersStore.filter((u) => u.id !== userId);
+    return { data: { message: 'User deleted successfully' } };
+  }
+  return axios.delete(`${API_URL}/${userId}`);
+};
+
+const deleteMultipleUsers = async (ids) => {
+  if (USE_MOCK_API) {
+    await delay(500);
+    mockUsersStore = mockUsersStore.filter((u) => !ids.includes(u.id));
+    return { data: { message: `${ids.length} users deleted successfully` } };
+  }
+  return axios.post(`${API_URL}/bulk-delete`, { ids });
 };
 
 const getUniqueUserRoles = async () => {
-    if (USE_MOCK_API) {
-        await delay(100);
-        const roles = [...new Set(initialMockUsers.map(u => u.role))].sort();
-        return { data: roles };
-    }
-    const roles = [...new Set(initialMockUsers.map(u => u.role))].sort();
-    return { data: roles }; // Fallback
+  if (USE_MOCK_API) {
+    await delay(100);
+    const roles = [...new Set(initialMockUsers.map((u) => u.role))].sort();
+    return { data: roles };
+  }
+  const roles = [...new Set(initialMockUsers.map((u) => u.role))].sort();
+  return { data: roles };
 };
 
+
 const getUniqueUserStatuses = async () => {
-    if (USE_MOCK_API) {
-        await delay(100);
-        const statuses = [...new Set(initialMockUsers.map(u => u.status))].sort();
-        return { data: statuses };
-    }
-    const statuses = [...new Set(initialMockUsers.map(u => u.status))].sort();
-    return { data: statuses }; // Fallback
+  if (USE_MOCK_API) {
+    await delay(100);
+    const statuses = [...new Set(initialMockUsers.map((u) => u.status))].sort();
+    return { data: statuses };
+  }
+  const statuses = [...new Set(initialMockUsers.map((u) => u.status))].sort();
+  return { data: statuses };
 };
 
 const userService = {
   getUsers,
-  getUserById,
+  getUserById, // Fixed typo: getUsersById → getUserById
   addUser,
   updateUser,
   updateUserStatus,
   deleteUser,
+  deleteMultipleUsers,
   getUniqueUserRoles,
   getUniqueUserStatuses,
   initialMockUsers,
